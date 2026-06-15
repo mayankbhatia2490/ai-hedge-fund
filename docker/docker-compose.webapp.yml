@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: ai-hedge-fund-backend
+    container_name: ai-hedge-fund-backend
+    command: uvicorn app.backend.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ../.env:/app/.env
+      - ../hedge_fund.db:/app/hedge_fund.db
+    ports:
+      - "8000:8000"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: /app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    image: ai-hedge-fund-frontend
+    container_name: ai-hedge-fund-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
