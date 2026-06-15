@@ -10,7 +10,7 @@ services:
       - ../.env:/app/.env
       - ../hedge_fund.db:/app/hedge_fund.db
     ports:
-      - "8000:8000"
+      - "8080:8000"
     environment:
       PYTHONUNBUFFERED: "1"
       PYTHONPATH: /app
@@ -20,10 +20,14 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     image: ai-hedge-fund-frontend
     container_name: ai-hedge-fund-frontend
     ports:
       - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     depends_on:
       - backend
     restart: unless-stopped
